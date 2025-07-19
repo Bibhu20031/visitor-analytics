@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Real-Time Visitor Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <h1>📊 Real-Time Visitor Analytics</h1>
+  <div class="status" id="ws-status">Connecting...</div>
+
+  <div class="section">
+    <h2>Live Stats</h2>
+    <p>Active Visitors: <span id="active-visitors">0</span></p>
+    <p>Total Visitors Today: <span id="total-today">0</span></p>
+    <p>Pages Visited:</p>
+    <ul id="page-counts"></ul>
+  </div>
+
+  <div class="section">
+    <h2>Filters</h2>
+    <label for="country">Country:</label>
+    <input type="text" id="country" placeholder="e.g. India" />
+    <label for="page">Page:</label>
+    <input type="text" id="page" placeholder="/products" />
+    <button onclick="applyFilters()">Apply</button>
+  </div>
+
+  <div class="section">
+    <h2>Live Visitor Feed</h2>
+    <div id="visitor-feed"></div>
+  </div>
+
+  <div class="section">
+    <h2>Active Sessions</h2>
+    <div id="sessions"></div>
+  </div>
+
+  <script src="./dashboard.js"></script>
+</body>
+</html>

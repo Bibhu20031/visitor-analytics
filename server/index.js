@@ -14,7 +14,7 @@ socketHandler(wss);
 app.use(express.json());
 app.use('/api', apiRoutes);
 
-app.use(express.static(path.join(__dirname,'..','public')));
+app.use(express.static(path.join(__dirname ,'..','public')));
 
 const PORT = 3000;
 server.listen(PORT, ()=>{

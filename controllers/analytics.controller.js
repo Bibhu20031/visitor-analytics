@@ -11,7 +11,7 @@ exports.handleEvent = (req,res)=>{
     store.addEvent(event);
 
     broadcastEvent({
-        type:'visiter_update',
+        type:'visitor_update',
         data:{
             event,
             stats:store.getStats()

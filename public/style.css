@@ -1,0 +1,41 @@
+body {
+    font-family: sans-serif;
+    padding: 20px;
+    background: #f7f7f7;
+}
+
+h1 {
+    color: #333;
+}
+
+.status {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.section {
+    background: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px #ccc;
+}
+
+.visitor,
+.session {
+    border-bottom: 1px solid #eee;
+    padding: 5px;
+}
+
+.highlight {
+    background-color: #e0ffe0;
+}
+
+label {
+    margin-right: 10px;
+}
+
+input,
+select {
+    margin-right: 10px;
+}

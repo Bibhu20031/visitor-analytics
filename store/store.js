@@ -49,7 +49,7 @@ function getSessions(){
         sessionId,
         currentPage: session.journey[session.journey.length - 1],
         journey:session.journey,
-        duration: Math.floor( (new Date (session.lastSeen) - new Date(session.startTime))/1000),
+        duration: Math.floor( (new Date (session.lastSeen) - new Date(session.startTime))/1000).toFixed(1),
         country:session.country
     }));
 }
