@@ -1,3 +1,4 @@
+const store = require('../store/store.js')
 let wssGlobal= null;
 
 function setupSockets(wss){
@@ -16,7 +17,30 @@ function setupSockets(wss){
             const msg= JSON.parse(message);
             console.log('Dashboard:',msg);
 
-            //todo
+            if(msg.type === 'request_detailed_stats'){
+                const filter = msg.filter || {};
+                const filteredStats = store.getFilteredStats(filter);
+                const filteredSessions= store.getFilteredSessions(filter);
+
+                ws.send(JSON.stringify({
+                    type:'visitor_update',
+                    data:{
+                        event:null,
+                        stats: filteredStats
+                    }
+                }));
+
+                filteredSessions.forEach((session)=>{
+                    ws.send(JSON.stringify({
+                        type:'session_activity',
+                        data: session
+                    }));
+                });
+            }
+
+            if(msg.type === 'track_dashboard_action'){
+                console.log('Dashboard', msg);
+            }
         });
 
         ws.on('close',()=>{
