@@ -6,6 +6,8 @@ const totalEl = document.getElementById("total-today");
 const pageCountsEl = document.getElementById("page-counts");
 const feedEl = document.getElementById("visitor-feed");
 const sessionsEl = document.getElementById("sessions");
+const dashboardCountEl = document.getElementById("dashboard-count");
+
 
 
 let filters = {};
@@ -25,14 +27,22 @@ ws.onclose = () => {
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
   switch (msg.type) {
-    // case "user_connected":
-    // case "user_disconnected":
-    //   break;
+    case "user_connected":
+    if (dashboardCountEl) {
+      dashboardCountEl.textContent = `Connected Dashboards: ${msg.totalDashboards}`;
+    }
+    break;
+
+  case "user_disconnected":
+    if (dashboardCountEl) {
+      dashboardCountEl.textContent = `Connected Dashboards: ${msg.data.totalDashboards}`;
+    }
+    break;
 
     case "visitor_update":
       updateStats(msg.data.stats);
-      addVisitorEvent(msg.data.event);
-      break;
+      if (msg.data.event) addVisitorEvent(msg.data.event);
+    break;
 
     case "session_activity":
       updateSession(msg.data);
@@ -67,6 +77,14 @@ function addVisitorEvent(event) {
     Session: ${event.sessionId} | ${event.country} | ${event.timestamp}
   `;
   feedEl.prepend(div);
+
+  const ding = new Audio("/ding.mp3"); 
+  ding.play();
+
+  div.style.backgroundColor = "#d1ffd1";
+  setTimeout(() => {
+    div.style.backgroundColor = "white";
+  }, 500);
 }
 
 const sessionMap = {}; 
@@ -119,4 +137,13 @@ function applyFilters() {
       }
     })
   );
+}
+
+function clearStats() {
+  feedEl.innerHTML = "";
+  sessionsEl.innerHTML = "";
+  pageCountsEl.innerHTML = "";
+  activeEl.textContent = 0;
+  totalEl.textContent = 0;
+  Object.keys(sessionMap).forEach(key => delete sessionMap[key]);
 }
