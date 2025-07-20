@@ -7,7 +7,7 @@ const pageCountsEl = document.getElementById("page-counts");
 const feedEl = document.getElementById("visitor-feed");
 const sessionsEl = document.getElementById("sessions");
 const dashboardCountEl = document.getElementById("dashboard-count");
-
+const ctx = document.getElementById("visitorChart").getContext("2d");
 
 
 let filters = {};
@@ -41,7 +41,10 @@ ws.onmessage = (event) => {
 
     case "visitor_update":
       updateStats(msg.data.stats);
-      if (msg.data.event) addVisitorEvent(msg.data.event);
+    if (msg.data.event) {
+      addVisitorEvent(msg.data.event);
+      updateChart(msg.data.event); 
+    };
     break;
 
     case "session_activity":
@@ -146,4 +149,52 @@ function clearStats() {
   activeEl.textContent = 0;
   totalEl.textContent = 0;
   Object.keys(sessionMap).forEach(key => delete sessionMap[key]);
+  chart.data.labels = [];
+  chart.data.datasets[0].data = [];
+  chart.update();
+  chartData.length = 0;
+}
+
+const chartData = [];
+
+const chart = new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Visitors per Minute",
+      data: [],
+      borderColor: "blue",
+      fill: false
+    }]
+  },
+  options: {
+    scales: {
+      x: { title: { display: true, text: "Time (HH:MM)" } },
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+
+function updateChart(event) {
+  const now = new Date();
+  const roundedTime = new Date(Math.floor(now.getTime() / 60000) * 60000);
+  const timeLabel = roundedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  chartData.push({ timestamp: roundedTime });
+  const recent = chartData.filter(e => now - e.timestamp <= 10 * 60 * 1000);
+  chartData.length = 0;
+  chartData.push(...recent);
+
+  const countByMinute = {};
+  recent.forEach(e => {
+    const label = e.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    countByMinute[label] = (countByMinute[label] || 0) + 1;
+  });
+
+  const sortedLabels = Object.keys(countByMinute).sort();
+  chart.data.labels = sortedLabels;
+  chart.data.datasets[0].data = sortedLabels.map(label => countByMinute[label]);
+  chart.update();
 }
